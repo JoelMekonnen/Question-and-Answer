@@ -1,15 +1,18 @@
 #include <iostream>
 #include <stdlib.h>
+#include <fstream>
+#include <windows.h>
+#include <ctime>
+#include <string>
+#include <vector>
+#include "lib.hpp"
 using namespace std;
 
-class QuestionDb
-{
-     
-};
+
 int main()
 {
-    cout << "Hello world run from cmd.....\n";
-    cout << "lets see what it does.....\n";
-    cout << "this is the last change....\n";
+    QuestionDb *ques = new QuestionDb();
+    ques->AddQuestion();
+    
     system("pause");
 }
