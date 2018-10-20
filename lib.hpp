@@ -27,14 +27,14 @@ class QuestionDb
              cout << "please inser the ammount of times to run the program....:";
              cin >> run;
             // the instance of the structure
+            cin.ignore();
             NewFile.output.open("QuesDb.txt", ios::app|ios::out);
             for(int r = 0; r < run; r++)
             {
                 cout << "please insert the question:";
-                cin.ignore();
-                cin.clear();
-                getline(cin, Question, '\n');
-                NewFile.output << NumOfQues + r << "] " << Question << endl;
+                cin.ignore(0);
+                getline(cin, Question);
+                NewFile.output << NumOfQues + r << "] " <<  Question << endl;
                 // add answer
                 addAnswer(NumOfQues + r);
             }   
@@ -58,7 +58,7 @@ class QuestionDb
     void addAnswer(int quesnum)
     {
         cout << "Ans:";
-        cin.ignore();
+        cin.ignore(0);
         cin.clear();
         getline(cin, Answer);
         File NewFile; // create a new file
