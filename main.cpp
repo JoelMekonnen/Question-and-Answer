@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <cctype>
 #include <fstream>
 #include <windows.h>
 #include <ctime>
@@ -12,7 +13,6 @@ using namespace std;
 int main()
 {
     QuestionDb *ques = new QuestionDb();
-    ques->AddQuestion();
-    
+    ques->showQuestion();
     system("pause");
 }
