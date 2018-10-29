@@ -12,7 +12,7 @@ using namespace std;
 
 int main()
 {
-    QuestionDb *ques = new QuestionDb();
-    ques->showQuestion();
+    MultipleQuestion *ques = new MultipleQuestion();
+    ques->add_Question();
     system("pause");
 }
