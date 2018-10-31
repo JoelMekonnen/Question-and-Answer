@@ -135,7 +135,7 @@ class QuestionDb
 class MultipleQuestion {
       // implementing inheritance
     public:
-        string Answer[4];  // create the multiple
+        string Choices[4];  // create the multiple
         string answer;
         string Question;
     private: void AddQuestion()
@@ -146,15 +146,23 @@ class MultipleQuestion {
           int n; cin>>n;
           multiFile.input.open("multQues.txt", ios::app|ios::in);
           multiFile.output.open("multQues.txt", ios::app|ios::out);
-          cout << GetSize(multiFile.input) << endl;
+          int Size = GetSize(multiFile.input);
           cin.ignore();
-          for(int i = 0; i < n; i++)
+          for(int i = 1; i <= n; i++)
           {
              cin.ignore(0);
              cout << "please insert the Question: ";
              getline(cin, Question);
-             multiFile.output << GetSize(multiFile.input) + i << "] " << Question << endl;
+             multiFile.output <<  (Size + i) - 1 << "] " << Question << endl;
+             add_multi_answer((Size + i) - 1);
           }
+      }
+      void add_multi_answer(int QuesNum)
+      {
+        // here we add the multiple choices as well as the answer to the multiple choices
+        File multiFile;
+        multiFile.output.open("multQues_Ans.txt", ios::app|ios::out);
+        
       }
     public: void add_Question()
     {
