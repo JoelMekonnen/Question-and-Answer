@@ -1,10 +1,18 @@
 #pragma once
+#include <iostream>
+#include <stdlib.h>
+#include <cctype>
+#include <fstream>
+#include <windows.h>
+#include <ctime>
+#include <string>
+#include <vector>
 using namespace std;
 struct File{
     ofstream output;  // the output
     ifstream input;  // the input
 };
-int GetSize(ifstream i)
+int GetSize(ifstream &i)
 {
   int NumOfQues = 0; // the variable to hold the number of question
   vector<string> SizeVec;
@@ -16,7 +24,7 @@ int GetSize(ifstream i)
    NumOfQues = SizeVec.size();
    return NumOfQues;
 }
-vector<string> buildVec(ifstream i)
+vector<string> buildVec(ifstream &i)
 {
   vector<string> SizeVec;
   while(!i.eof()){
@@ -41,6 +49,7 @@ class QuestionDb
              cin >> run;
             // the instance of the structure
             cin.ignore();
+            NewFile.input.open("QuesDb.txt", ios::app|ios::in);
             NewFile.output.open("QuesDb.txt", ios::app|ios::out);
             for(int r = 0; r < run; r++)
             {
@@ -58,6 +67,7 @@ class QuestionDb
         int showQues; // to add randomness to the project
         File NewFile;
         srand(time(NULL));
+        NewFile.input.open("QuesDb.txt", ios::app|ios::in);
         showQues = rand() % (GetSize(NewFile.input) - 1);
         if(showQues == GetSize(NewFile.input) - 1)
         {
@@ -79,7 +89,7 @@ class QuestionDb
         {
             correct_answer = answer_vec[showQues].substr(3, 100);
         }
-        else if(GetSize(NewFile.input) < 20 && GetSize(NewFile.input) > 9))
+        else if(GetSize(NewFile.input) < 20 && GetSize(NewFile.input) > 9)
         {
             correct_answer = answer_vec[showQues].substr(4, 100);
         }
@@ -132,15 +142,18 @@ class MultipleQuestion {
       {
           // first lets create a multiple question format for adding Questions
           File multiFile;
-          multiFile.input.open("multQues.txt", ios::app|ios::in);
-          multiFile.output.open("multQues.txt", ios::app|ios::out);
           cout << "Please insert the amount of time to run the program:";
           int n; cin>>n;
+          multiFile.input.open("multQues.txt", ios::app|ios::in);
+          multiFile.output.open("multQues.txt", ios::app|ios::out);
+          cout << GetSize(multiFile.input) << endl;
+          cin.ignore();
           for(int i = 0; i < n; i++)
           {
-             cout << "Ques no " << i << ": ";
+             cin.ignore(0);
+             cout << "please insert the Question: ";
              getline(cin, Question);
-             multiFile.output << GetSize(multiFile.input) << "] " << Question << endl;
+             multiFile.output << GetSize(multiFile.input) + i << "] " << Question << endl;
           }
       }
     public: void add_Question()
