@@ -14,7 +14,7 @@ struct File{
 };
 int GetSize(ifstream &i)
 {
-  int NumOfQues = 0; // the variable to hold the number of question
+  int NumOfQues; // the variable to hold the number of question
   vector<string> SizeVec;
   while(!i.eof()){
        string buffer;
@@ -162,10 +162,48 @@ class MultipleQuestion {
         // here we add the multiple choices as well as the answer to the multiple choices
         File multiFile;
         multiFile.output.open("multQues_Ans.txt", ios::app|ios::out);
-        
+        cin.ignore(0);
+        cout << "Insert A:";
+        getline(cin, Choices[0]);
+        cout << "Insert B:";
+        getline(cin, Choices[1]);
+        cout << "Insert C:";
+        getline(cin, Choices[2]);
+        cout << "Insert D:";
+        getline(cin, Choices[3]);
+        cout << "Ans: ";
+        getline(cin, answer);
+        multiFile.output  << QuesNum << "]---A]" << Choices[0] << "---B]" << Choices[1]
+            << "---C]" << Choices[2] << "---D]" << Choices[3] << "---" << "Ans:" << answer << endl;
+      }
+      void show_multi_Question()
+      {
+        // this is multiple question viewer progrm that displays the questions
+        // first lets build lets get the file size and also the vector
+        try {
+        File multiFile;
+        File ans_file;
+        multiFile.input.open("multQues.txt", ios::app|ios::in);
+        ans_file.input.open("multQues_Ans.txt", ios::app|ios::in);
+        //cout << "-------lets stop here for a moment-------" << endl;
+        vector<string> QuesVec = buildVec(multiFile.input);
+        int size = GetSize(multiFile.input);
+        srand(time(NULL));
+        cout << size << endl;
+        int Quesnum = rand() % (size -1);
+        cout << QuesVec[Quesnum] << endl;
+        // lets first Check if the vector has properly built by using random number
+        } catch(exception e)
+        {
+            cerr << "something went wrong try again" << endl;
+        }
       }
     public: void add_Question()
     {
        AddQuestion();
+    }
+    void show_Question()
+    {
+        show_multi_Question();
     }
 };

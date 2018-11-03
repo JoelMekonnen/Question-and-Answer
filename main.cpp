@@ -12,7 +12,7 @@ using namespace std;
 
 int main()
 {
-    MultipleQuestion *ques = new MultipleQuestion();
-    ques->add_Question();
+    MultipleQuestion ques;
+    ques.show_Question();
     system("pause");
 }
