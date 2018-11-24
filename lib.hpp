@@ -56,7 +56,8 @@ protected:
 	}
 	void showQuestion()
 	{
-		while(this->CheckLife()){
+		int i = 0;
+		while(this->CheckLife() && i < this->QueSize()){
 		try {
 			int showQues; // to add randomness to the project
 			File NewFile;
@@ -83,11 +84,10 @@ protected:
 				}
 				 else {
                     cout << SizeVec[showQues] << endl;
+					i++;
 				 }
 				bool isAvailable;
 				// lets loop through the vector that tells us where the question is played
-
-			    
 
 				// now lets ask the user for an Answer
 				this->playedQuestion(showQues); // this adds the question to the list of played question
