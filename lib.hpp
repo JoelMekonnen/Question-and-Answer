@@ -7,123 +7,160 @@
 #include <ctime>
 #include <string>
 #include <vector>
+#include "GameLogic.hpp"
 using namespace std;
 struct File{
     ofstream output;  // the output
     ifstream input;  // the input
 };
-int GetSize(ifstream &i)
+class QuestionDb :GameLogic
 {
-  int NumOfQues; // the variable to hold the number of question
-  vector<string> SizeVec;
-  while(!i.eof()){
-       string buffer;
-       getline(i, buffer);
-       SizeVec.push_back(buffer);
-   }
-   NumOfQues = SizeVec.size();
-   return NumOfQues;
-}
-vector<string> buildVec(ifstream &i)
-{
-  vector<string> SizeVec;
-  while(!i.eof()){
-       string buffer;
-       getline(i, buffer);
-       SizeVec.push_back(buffer);
-   }
-   return SizeVec;
-}
-class QuestionDb
-{
-     // this is the question database
-     // this simply adds a question to the file
-   protected:
-        string Question; // takes the question input
-        string Answer;
-        void AddQuestion(){
-            // Before Adding question we need to know number of question in the database
-             File NewFile;
-             int run; // the ammount of times to run the program
-             cout << "please inser the ammount of times to run the program....:";
-             cin >> run;
-            // the instance of the structure
-            cin.ignore();
-            NewFile.input.open("QuesDb.txt", ios::app|ios::in);
-            NewFile.output.open("QuesDb.txt", ios::app|ios::out);
-            for(int r = 0; r < run; r++)
-            {
-                cout << "please insert the question:";
-                cin.ignore(0);
-                getline(cin, Question);
-                NewFile.output << GetSize(NewFile.input) + r << "] " <<  Question << endl;
-                // add answer
-                addAnswer(GetSize(NewFile.input) + r);
-            }
-        }
-    void showQuestion()
-    {
-        try {
-        int showQues; // to add randomness to the project
-        File NewFile;
-        srand(time(NULL));
-        NewFile.input.open("QuesDb.txt", ios::app|ios::in);
-        showQues = rand() % (GetSize(NewFile.input) - 1);
-        if(showQues == GetSize(NewFile.input) - 1)
-        {
-           cout << "Error.......\n";
-           throw new exception;
-        }
-        cout << buildVec(NewFile.input)[showQues] << endl;
-        // now lets ask the user for an Answer
-        string Answer; // this is the answer string
-        cout << "ans:";
-        getline(cin, Answer); // this accepts the Answer
-        //-----------------------------
-        File answer_file;
-        answer_file.input.open("answer.txt", ios::app|ios::in);
-        vector<string> answer_vec = buildVec(answer_file.input);
-        // now check if the answer is correct
-        string correct_answer;
-        if(GetSize(NewFile.input) < 9)
-        {
-            correct_answer = answer_vec[showQues].substr(3, 100);
-        }
-        else if(GetSize(NewFile.input) < 20 && GetSize(NewFile.input) > 9)
-        {
-            correct_answer = answer_vec[showQues].substr(4, 100);
-        }
-        else
-        {
-           correct_answer = answer_vec[showQues].substr(5, 100);
-        }
-        // then lets make sure the user know they are wrong or right
-        if(Answer == correct_answer)
-        {
-           wcout << "correct Answer......" << endl;
-        }
-        else {
-          wcout << "wrong answer......" << endl;
-        }
-    } catch(exception e)
-    {
-      cout << "something went wrong....\n" << endl;
-    }
-    }
-    void addAnswer(int quesnum)
-    {
-        cout << "Ans:";
-        cin.ignore(0);
-        cin.clear();
-        getline(cin, Answer);
-        File NewFile; // create a new file
-        NewFile.output.open("answer.txt", ios::app|ios::in);
-        NewFile.output << quesnum << "] " << Answer << endl;
-    }
+	// this is the question database
+	// this simply adds a question to the file
+protected:
+	string Question; // takes the question input
+	string Answer;
+      
+	public: int QueSize;
+    
+public:
+	QuestionDb(string playersName) :GameLogic(playersName)
+	{
+		// Initate a new user and show them the current stats
+		this->ShowStatus(); // this show the status of the user
+		File NewFile;
+         NewFile.input.open("QuesDb.txt", ios::app|ios::in);
+		 vector<string> SizeVec;
+		 while (!NewFile.input.eof()) {
+			string buffer;
+			getline(NewFile.input, buffer);
+			SizeVec.push_back(buffer);
+		}
+        int Quesnum = SizeVec.size();
+		QueSize = Quesnum;
+	}
+protected:
+
+	void AddQuestion(int run) {
+		// Before Adding question we need to know number of question in the database
+		File NewFile;
+		// the instance of the structure
+		cin.ignore();
+		NewFile.input.open("QuesDb.txt", ios::app | ios::in);
+		NewFile.output.open("QuesDb.txt", ios::app | ios::out);
+		vector<string> SizeVec;
+		while (!NewFile.input.eof()) {
+			string buffer;
+			getline(NewFile.input, buffer);
+			SizeVec.push_back(buffer);
+		}
+		int Quesnum = SizeVec.size();
+		for (int r = 0; r < run; r++)
+		{
+			cout << "please insert the question:";
+			cin.ignore(0);
+			getline(cin, Question);
+			NewFile.output << Quesnum + r << "] " << Question << endl;
+			// add answer
+			addAnswer(Quesnum + r);
+		}
+	}
+	void showQuestion()
+	{
+		int i = 0;
+		// let me use a simple array for this job
+		int LastQues[100];
+		while(this->CheckLife()) {
+		try {
+			int showQues; // to add randomness to the project
+			File NewFile;
+			NewFile.input.open("QuesDb.txt", ios::app | ios::in);
+			vector<string> SizeVec;
+			while (!NewFile.input.eof()) {
+				string buffer;
+				getline(NewFile.input, buffer);
+				SizeVec.push_back(buffer);
+			}
+			int Quesnum = SizeVec.size();
+			if (Quesnum == 0)
+			{
+				cout << "the work file is currently is empty please try again latter\n";
+			}
+			else {
+			MoveUp:
+			    srand(time(NULL));
+				showQues = rand() % Quesnum;
+				cout << showQues <<  "|" << Quesnum <<endl;
+                cout << SizeVec[showQues] << endl;
+				 i++;
+				bool isAvailable;
+				// lets loop through the vector that tells us where the question is played
+
+				// now lets ask the user for an Answer
+			
+				string Answer; // this is the answer strin
+				cout << "ans:";
+				getline(cin, Answer); // this accepts the Answer
+				//-----------------------------
+				File answer_file;
+				answer_file.input.open("answer.txt", ios::app | ios::in);
+				vector<string> AnsVec;
+				while (!answer_file.input.eof()) {
+					string buffer;
+					getline(answer_file.input, buffer);
+					AnsVec.push_back(buffer);
+				}
+				// now check if the answer is correct
+				string correct_answer;
+				if (Quesnum < 9)
+				{
+					correct_answer = AnsVec[showQues].substr(3, 100);
+				}
+				else if (Quesnum < 99 && Quesnum > 9)
+				{
+					correct_answer = AnsVec[showQues].substr(4, 100);
+				}
+				else
+				{
+					correct_answer = AnsVec[showQues].substr(5, 100);
+				}
+				// then lets make sure the user know they are wrong or right
+				if (Answer == correct_answer)
+				{
+					wcout << "correct Answer......" << endl;
+					this->AddScore();
+					this->ShowStatus();
+				}
+				else {
+					wcout << "wrong answer......" << endl;
+					this->DecreaseLife();
+					this->ShowStatus();
+				}
+			} /*else if((isAvailable) && this->CheckLife()){
+				  goto MoveUp;
+				}*/
+		}
+		catch (exception e)
+		{
+			cout << "something went wrong....\n" << endl;
+		}
+	  } ;
+	}
+	void addAnswer(int quesnum)
+	{
+		cout << "Ans:";
+		cin.ignore(0);
+		cin.clear();
+		getline(cin, Answer);
+		File NewFile; // create a new file
+		NewFile.output.open("answer.txt", ios::app | ios::in);
+		NewFile.output << quesnum << "] " << Answer << endl;
+	}
    public:
-    void add_Question()
+    
+    void add_Question(int run)
     {
-       AddQuestion();
+       AddQuestion(run);
     }
     void show_Question()
     {
@@ -138,16 +175,22 @@ class MultipleQuestion {
         string Choices[4];  // create the multiple
         string answer;
         string Question;
-    private: void AddQuestion()
+    private: void AddQuestion(int n)
       {
           // first lets create a multiple question format for adding Questions
           File multiFile;
-          cout << "Please insert the amount of time to run the program:";
-          int n; cin>>n;
           multiFile.input.open("multQues.txt", ios::app|ios::in);
           multiFile.output.open("multQues.txt", ios::app|ios::out);
-          int Size = GetSize(multiFile.input);
+		  int Size;
+		  vector<string> SizeVec;
+		  while (!multiFile.input.eof()) {
+			  string buffer;
+			  getline(multiFile.input, buffer);
+			  SizeVec.push_back(buffer);
+		  }
+		  Size = SizeVec.size();
           cin.ignore();
+		  cin.clear();
           for(int i = 1; i <= n; i++)
           {
              cin.ignore(0);
@@ -161,7 +204,9 @@ class MultipleQuestion {
       {
         // here we add the multiple choices as well as the answer to the multiple choices
         File multiFile;
+        File multiFile_Ans;
         multiFile.output.open("multQues_Ans.txt", ios::app|ios::out);
+        multiFile_Ans.output.open("Ans_multi.txt", ios::app|ios::out);
         cin.ignore(0);
         cout << "Insert A:";
         getline(cin, Choices[0]);
@@ -173,8 +218,9 @@ class MultipleQuestion {
         getline(cin, Choices[3]);
         cout << "Ans: ";
         getline(cin, answer);
-        multiFile.output  << QuesNum << "]---A]" << Choices[0] << "---B]" << Choices[1]
-            << "---C]" << Choices[2] << "---D]" << Choices[3] << "---" << "Ans:" << answer << endl;
+        multiFile.output  << QuesNum << "] ---A]" << Choices[0] << "---B]" << Choices[1]
+            << "---C]" << Choices[2] << "---D]" << Choices[3] << "---" << endl;
+        multiFile_Ans.output << QuesNum << "]" << answer << endl;
       }
       void show_multi_Question()
       {
@@ -186,24 +232,77 @@ class MultipleQuestion {
         multiFile.input.open("multQues.txt", ios::app|ios::in);
         ans_file.input.open("multQues_Ans.txt", ios::app|ios::in);
         //cout << "-------lets stop here for a moment-------" << endl;
-        vector<string> QuesVec = buildVec(multiFile.input);
-        int size = GetSize(multiFile.input);
+		vector<string> QuesVec;
+		while (!multiFile.input.eof()) {
+			string buffer;
+			getline(multiFile.input, buffer);
+			QuesVec.push_back(buffer);
+		}
+        int size = QuesVec.size();
         srand(time(NULL));
-        cout << size << endl;
-        int Quesnum = rand() % (size -1);
+        // cout << size << endl;
+        int Quesnum = rand() % (size - 1);
         cout << QuesVec[Quesnum] << endl;
+		vector<string> AnsVec;
+		while (!ans_file.input.eof()) {
+			string buffer;
+			getline(ans_file.input, buffer);
+			AnsVec.push_back(buffer);
+		}
+        string choiceString = AnsVec[Quesnum].substr(3, 100);
+        // now that we have the answer it is best to send this to be decoded to another function
+        decode_Answer(choiceString, Quesnum);
         // lets first Check if the vector has properly built by using random number
         } catch(exception e)
         {
             cerr << "something went wrong try again" << endl;
         }
       }
-    public: void add_Question()
+      void decode_Answer(string ans_string, int Quesnum)
+      {
+         string ans; // this is the property that takes the answer
+         string delim = "---";
+         size_t pos = 0;
+         vector<string> choiceVec;
+         while((pos = ans_string.find(delim)) != string::npos)
+         {
+             string token = ans_string.substr(0, pos);
+             choiceVec.push_back(token);
+             ans_string.erase(0, pos + delim.length());
+         }
+         for(int i = 0; i < choiceVec.size(); i++)
+         {
+             cout << choiceVec[i] << endl;
+         }
+         File multiFile_Ans;
+         vector<string> multiVec;
+         multiFile_Ans.input.open("Ans_multi.txt", ios::app|ios::in);
+         while(!multiFile_Ans.input.eof())
+         {
+             string buffer;
+             getline(multiFile_Ans.input, buffer);
+             multiVec.push_back(buffer);
+         }
+         string Corr_Ans = multiVec[Quesnum].substr(2, 100);
+         //cout << Corr_Ans << endl;
+         string _ans;
+         cout << "Ans:";
+         cin >> _ans;
+         if(_ans == Corr_Ans)
+         {
+             cout << "Correct......." << endl;
+             
+         } 
+         else {
+             cout << "Wrong----------" << endl;
+         }
+      }
+    public: void add_Question(int n)
     {
-       AddQuestion();
+       AddQuestion(n);
     }
-    void show_Question()
+   void show_Question()
     {
-        show_multi_Question();
+       show_multi_Question();
     }
 };
