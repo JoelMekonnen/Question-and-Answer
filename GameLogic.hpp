@@ -53,29 +53,6 @@ class GameLogic {
              }
              
          }
-         bool playedQuestion(int QuesNum)
-         {
-             bool notAvailable = true;
-             for(int i = 0; i <ListOfQues.size(); i++)
-             {
-                 if(ListOfQues[i] == QuesNum)
-                 {
-                     notAvailable = false; 
-                 }
-                 else {
-                     notAvailable = true;
-                 }
-             }
-             if(notAvailable)
-             {
-                  ListOfQues.push_back(QuesNum);
-                  return true;
-             }
-             else {
-                 return false;
-             }
-             
-         }
          void ShowStatus()
          {
              cout << "|-------------" << this->player << "-------|" << endl;

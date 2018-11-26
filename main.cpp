@@ -12,11 +12,11 @@ void singlePlayer()
 {
     string usr_name;
 	cout << "----------player1 name:";
-	cin  >> usr_name;
-	
+	cin.ignore();
+	getline(cin, usr_name);
 	QuestionDb *NewUser = new QuestionDb(usr_name);
 	int i = 0;
-    while( i <= NewUser->QueSize())
+    while( i <= NewUser->QueSize)
 	{
 		NewUser->show_Question();
 		i++;

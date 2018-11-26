@@ -20,13 +20,24 @@ class QuestionDb :GameLogic
 protected:
 	string Question; // takes the question input
 	string Answer;
-	// string user;
-	int score = 0;
+      
+	public: int QueSize;
+    
 public:
 	QuestionDb(string playersName) :GameLogic(playersName)
 	{
 		// Initate a new user and show them the current stats
 		this->ShowStatus(); // this show the status of the user
+		File NewFile;
+         NewFile.input.open("QuesDb.txt", ios::app|ios::in);
+		 vector<string> SizeVec;
+		 while (!NewFile.input.eof()) {
+			string buffer;
+			getline(NewFile.input, buffer);
+			SizeVec.push_back(buffer);
+		}
+        int Quesnum = SizeVec.size();
+		QueSize = Quesnum;
 	}
 protected:
 
@@ -57,7 +68,9 @@ protected:
 	void showQuestion()
 	{
 		int i = 0;
-		while(this->CheckLife() && i < this->QueSize()){
+		// let me use a simple array for this job
+		int LastQues[100];
+		while(this->CheckLife()) {
 		try {
 			int showQues; // to add randomness to the project
 			File NewFile;
@@ -76,23 +89,16 @@ protected:
 			else {
 			MoveUp:
 			    srand(time(NULL));
-				showQues = rand() % (Quesnum - 1);
+				showQues = rand() % Quesnum;
 				cout << showQues <<  "|" << Quesnum <<endl;
-				if((showQues < 0) && (showQues > Quesnum) && this->playedQuestion(Quesnum))
-				{
-                    goto MoveUp;
-				}
-				 else {
-                    cout << SizeVec[showQues] << endl;
-					i++;
-				 }
+                cout << SizeVec[showQues] << endl;
+				 i++;
 				bool isAvailable;
 				// lets loop through the vector that tells us where the question is played
 
 				// now lets ask the user for an Answer
-				this->playedQuestion(showQues); // this adds the question to the list of played question
-				string Answer; // this is the answer string
-				cin.ignore(0);
+			
+				string Answer; // this is the answer strin
 				cout << "ans:";
 				getline(cin, Answer); // this accepts the Answer
 				//-----------------------------
@@ -138,7 +144,7 @@ protected:
 		{
 			cout << "something went wrong....\n" << endl;
 		}
-	  }
+	  } ;
 	}
 	void addAnswer(int quesnum)
 	{
@@ -151,19 +157,7 @@ protected:
 		NewFile.output << quesnum << "] " << Answer << endl;
 	}
    public:
-    int QueSize()
-    {
-         File NewFile;
-         NewFile.input.open("QuesDb.txt", ios::app|ios::in);
-		 vector<string> SizeVec;
-		 while (!NewFile.input.eof()) {
-			string buffer;
-			getline(NewFile.input, buffer);
-			SizeVec.push_back(buffer);
-		}
-        int Quesnum = SizeVec.size();
-        return Quesnum;
-    }
+    
     void add_Question(int run)
     {
        AddQuestion(run);
